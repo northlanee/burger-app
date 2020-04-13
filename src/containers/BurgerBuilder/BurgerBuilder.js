@@ -17,29 +17,53 @@ class BurgerBuilder extends Component {
             meat: 0,
             bacon: 0
         },
-        totalCost: 1.5
+        totalCost: 1.5,
+        purchasable: false
+    };
+
+    updatePurchaseState(ingredients) {
+        let sum = 0;
+        for (let key in ingredients) {
+            if (ingredients.hasOwnProperty(key)) {
+                sum += ingredients[key];
+            }
+        }
+        this.setState({purchasable: sum > 0});
     };
 
     addIngredientHandler = (type) => {
         const newIngredientCount = this.state.ingredients[type] + 1;
         const updatedIngredients = {...this.state.ingredients};
         updatedIngredients[type] = newIngredientCount;
-        const newTotalCost = Math.round((this.state.totalCost + this.state.costs[type]) * 100) / 100;
+        const newTotalCost = this.state.totalCost + this.state.costs[type];
         this.setState({ingredients: updatedIngredients, totalCost: newTotalCost});
+        this.updatePurchaseState(updatedIngredients);
     };
 
     removeIngredientHandler = (type) => {
+        if (this.state.ingredients[type] <= 0) return;
         const newIngredientCount = this.state.ingredients[type] - 1;
         const updatedIngredients = {...this.state.ingredients};
         updatedIngredients[type] = newIngredientCount;
-        this.setState({ingredients: updatedIngredients});
+        const newTotalCost = this.state.totalCost - this.state.costs[type];
+        this.setState({ingredients: updatedIngredients, totalCost: newTotalCost});
+        this.updatePurchaseState(updatedIngredients);
     };
 
     render() {
+        const disabledInfo = {...this.state.ingredients};
+        for (let key in disabledInfo) { disabledInfo[key] = disabledInfo[key] <= 0; }
+
         return (
             <>
                 <Burger ingredients={this.state.ingredients}/>
-                <BuildControls ingredientAdded={this.addIngredientHandler}/>
+                <BuildControls
+                    ingredientAdded={this.addIngredientHandler}
+                    ingredientRemoved={this.removeIngredientHandler}
+                    purchasable={this.state.purchasable}
+                    disabled={disabledInfo}
+                    price={this.state.totalCost}
+                />
             </>
         );
     }
