@@ -34,7 +34,7 @@ const Ingredient = (props) => {
     return ingredient;
 };
 
-Ingredient.PropTypes = {
+Ingredient.propTypes = {
     type: PropTypes.string.isRequired
 };
 
