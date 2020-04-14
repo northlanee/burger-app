@@ -1,6 +1,7 @@
 import React from "react";
+import Button from "../../UI/Button/Button";
 
-const OrderSummary = ({ingredients}) => {
+const OrderSummary = ({ingredients, purchaseCancel, purchaseContinue, price}) => {
     const ingredientsSummary = [];
     for (let key in ingredients) {
         if (ingredients.hasOwnProperty(key)) {
@@ -17,7 +18,10 @@ const OrderSummary = ({ingredients}) => {
             <ul>
                 {ingredientsSummary}
             </ul>
+            <p><strong>Total price: {price.toFixed(2)}$</strong></p>
             <p>Continue to checkout?</p>
+            <Button clicked={purchaseCancel} type='Danger'>CANCEL</Button>
+            <Button clicked={purchaseContinue} type='Success'>CONTINUE</Button>
         </>
     );
 };
