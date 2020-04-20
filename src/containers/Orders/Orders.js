@@ -3,10 +3,11 @@ import Order from "../../components/Order/Order";
 
 import axios from "./../../api/orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import { connect } from "react-redux";
+import { setOrders } from "../../store/orders-reducer/orders-reducer";
 
 class Orders extends Component {
     state = {
-        orders: [],
         loading: true,
     };
 
@@ -21,7 +22,8 @@ class Orders extends Component {
                         id: key,
                     });
                 }
-                this.setState({ loading: false, orders: fetchedOrders });
+                this.props.setOrders(fetchedOrders);
+                this.setState({ loading: false });
             })
             .catch(() => {
                 this.setState({ loading: false });
@@ -30,9 +32,9 @@ class Orders extends Component {
 
     render() {
         let orders;
-        if (!this.state.orders.length) orders = <h2>You have no orders yet</h2>;
+        if (!this.props.orders.length) orders = <h2>You have no orders yet</h2>;
         else
-            orders = this.state.orders.map((order) => {
+            orders = this.props.orders.map((order) => {
                 return (
                     <Order
                         key={order.id}
@@ -46,4 +48,16 @@ class Orders extends Component {
     }
 }
 
-export default Orders;
+const mapStateToProps = (state) => {
+    return {
+        orders: state.ordersReducer.orders,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setOrders: (orders) => dispatch(setOrders({ orders })),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Orders);
