@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "./../../api/orders";
 
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
@@ -8,8 +7,8 @@ import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import { connect } from "react-redux";
 import {
+    getIngredients,
     setBurger,
-    setIngredients,
 } from "../../store/burger-reducer/burgerReducer";
 
 class BurgerBuilder extends Component {
@@ -20,9 +19,7 @@ class BurgerBuilder extends Component {
     };
 
     componentDidMount() {
-        axios.get("/ingredients.json").then((response) => {
-            this.props.setIngredients({ ingredients: response.data });
-        });
+        this.props.getIngredients();
     }
 
     updatePurchaseState(ingredients) {
@@ -130,8 +127,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setIngredients: (ingredients) => dispatch(setIngredients(ingredients)),
         setBurger: (payload) => dispatch(setBurger(payload)),
+        getIngredients: () => dispatch(getIngredients()),
     };
 };
 
