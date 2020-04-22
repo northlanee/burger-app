@@ -5,7 +5,7 @@ const SET_LOADING = "SET_LOADING";
 
 const initialState = {
     orders: [],
-    loading: true,
+    loading: false,
 };
 
 const ordersReducer = (state = initialState, action) => {
@@ -20,8 +20,9 @@ const ordersReducer = (state = initialState, action) => {
                 ...state,
                 loading: action.payload,
             };
+        default:
+            return state;
     }
-    return state;
 };
 
 export default ordersReducer;
@@ -40,5 +41,13 @@ export const getOrders = () => (dispatch) => {
         }
         dispatch(setOrders(fetchedOrders));
         dispatch(setLoading(false));
+    });
+};
+
+export const orderHandler = (order, history) => (dispatch) => {
+    dispatch(setLoading(true));
+    axios.post("/orders.json", order).then(() => {
+        dispatch(setLoading(false));
+        history.push("/orders");
     });
 };

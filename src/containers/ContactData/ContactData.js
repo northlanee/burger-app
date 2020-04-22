@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import Button from "../../components/UI/Button/Button";
 
 import s from "./ContactData.module.css";
-import axios from "./../../api";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Input from "../../components/UI/Input/Input";
 import { withRouter } from "react-router-dom";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { orderHandler } from "../../store/orders-reducer/orders-reducer";
 
 class ContactData extends Component {
     state = {
@@ -37,15 +39,11 @@ class ContactData extends Component {
                 value: "",
             },
         ],
-
-        loading: false,
     };
 
-    orderHandler = (e) => {
-        e.preventDefault();
-        this.setState({ loading: true });
+    createOrder = () => {
         const formData = this.state.orderForm;
-        const order = {
+        return {
             ingredients: this.props.ingredients,
             price: this.props.price.toFixed(2),
             customer: {
@@ -58,15 +56,11 @@ class ContactData extends Component {
                 },
             },
         };
-        axios
-            .post("/orders.json", order)
-            .then(() => {
-                this.setState({ loading: false });
-                this.props.history.push("/orders");
-            })
-            .catch((error) => {
-                this.setState({ loading: false });
-            });
+    };
+
+    orderHandler = (e) => {
+        e.preventDefault();
+        this.props.orderHandler(this.createOrder(), this.props.history);
     };
 
     inputChangeHandler = (e, index) => {
@@ -95,7 +89,7 @@ class ContactData extends Component {
                 <Button type="Success">Order</Button>
             </form>
         );
-        if (this.state.loading) form = <Spinner />;
+        if (this.props.loading) form = <Spinner />;
 
         return (
             <div className={s.ContactData}>
@@ -106,4 +100,13 @@ class ContactData extends Component {
     }
 }
 
-export default withRouter(ContactData);
+const mapStateToProps = (state) => {
+    return {
+        loading: state.ordersReducer.loading,
+    };
+};
+
+export default compose(
+    withRouter,
+    connect(mapStateToProps, { orderHandler })
+)(ContactData);

@@ -15,6 +15,7 @@ const initialState = {
     },
     ingredients: null,
     totalCost: 1.5,
+    loading: true,
 };
 
 const burgerReducer = (state = initialState, action) => {
@@ -22,14 +23,16 @@ const burgerReducer = (state = initialState, action) => {
         case SET_INGREDIENTS:
             return updateObject(state, {
                 ingredients: action.payload.ingredients,
+                totalCost: 1.5,
             });
         case SET_BURGER:
             return updateObject(state, {
                 ingredients: action.payload.ingredients,
                 totalCost: action.payload.totalCost,
             });
+        default:
+            return state;
     }
-    return state;
 };
 
 export default burgerReducer;

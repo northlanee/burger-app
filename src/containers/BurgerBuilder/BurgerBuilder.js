@@ -15,7 +15,6 @@ class BurgerBuilder extends Component {
     state = {
         purchasable: false,
         purchasing: false,
-        loading: false,
     };
 
     componentDidMount() {
@@ -30,12 +29,8 @@ class BurgerBuilder extends Component {
         this.setState({ purchasable: sum > 0 });
     }
 
-    purchaseHandler = () => {
-        this.setState({ purchasing: true });
-    };
-
-    purchaseCancelHandler = () => {
-        this.setState({ purchasing: false });
+    purchaseHandler = (purchasing) => {
+        this.setState({ purchasing });
     };
 
     purchaseContinueHandler = () => {
@@ -74,17 +69,14 @@ class BurgerBuilder extends Component {
             disabledInfo[key] = disabledInfo[key] <= 0;
         }
 
-        let orderSummary = <Spinner />;
-        if (!this.state.loading) {
-            orderSummary = (
-                <OrderSummary
-                    ingredients={ingredients}
-                    purchaseCancel={this.purchaseCancelHandler}
-                    purchaseContinue={this.purchaseContinueHandler}
-                    price={totalCost}
-                />
-            );
-        }
+        const orderSummary = (
+            <OrderSummary
+                ingredients={ingredients}
+                purchaseCancel={() => this.purchaseHandler(false)}
+                purchaseContinue={this.purchaseContinueHandler}
+                price={totalCost}
+            />
+        );
 
         let burger = <Spinner />;
         if (ingredients) {
@@ -97,7 +89,7 @@ class BurgerBuilder extends Component {
                         purchasable={this.state.purchasable}
                         disabled={disabledInfo}
                         price={totalCost}
-                        purchasing={this.purchaseHandler}
+                        purchasing={() => this.purchaseHandler(true)}
                     />
                 </>
             );
@@ -107,7 +99,7 @@ class BurgerBuilder extends Component {
             <>
                 <Modal
                     show={this.state.purchasing}
-                    modalClose={this.purchaseCancelHandler}
+                    modalClose={() => this.purchaseHandler(false)}
                 >
                     {orderSummary}
                 </Modal>
@@ -122,6 +114,7 @@ const mapStateToProps = (state) => {
         ingredients: state.burgerReducer.ingredients,
         costs: state.burgerReducer.costs,
         totalCost: state.burgerReducer.totalCost,
+        loading: state.burgerReducer.loading,
     };
 };
 
