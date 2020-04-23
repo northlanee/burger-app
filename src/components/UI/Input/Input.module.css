@@ -3,13 +3,6 @@
     padding: 1rem;
 }
 
-.Label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.8rem;
-    text-transform: capitalize;
-}
-
 input {
     outline: none;
     border: 1px solid #ccc;

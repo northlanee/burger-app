@@ -8,8 +8,8 @@
     box-shadow: 0 2px 3px #ccc;
 }
 
-.ContactData input {
-    display: block;
+.Error {
+    color: red;
 }
 
 @media (min-width: 600px) {
