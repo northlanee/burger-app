@@ -6,7 +6,6 @@ import Spinner from "../../components/UI/Spinner/Spinner";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { orderHandler } from "../../store/orders-reducer/orders-reducer";
 
 import { Formik, Form } from "formik";
 import Yup, {
@@ -15,6 +14,7 @@ import Yup, {
     flatValidator,
 } from "./../../helpers/validators";
 import fieldCreator from "../../helpers/formFieldCreator";
+import { orderHandler } from "../../store/orders-reducer/ordersReducer";
 
 class ContactData extends Component {
     createOrder = (values) => {

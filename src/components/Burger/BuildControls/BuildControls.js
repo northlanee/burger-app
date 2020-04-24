@@ -3,30 +3,24 @@ import React from "react";
 import s from "./BuildControls.module.css";
 import BuildControl from "./BuildControl/BuildControl";
 
-const controls = [
-    { label: "Meat", type: "meat" },
-    { label: "Cheese", type: "cheese" },
-    { label: "Salad", type: "salad" },
-    { label: "Bacon", type: "bacon" },
-];
-
 const BuildControls = ({
+    ingredients,
+    ingredientsCount,
     ingredientAdded,
     ingredientRemoved,
-    disabled,
     price,
-    purchasable,
     purchasing,
     isAuth,
 }) => {
-    const controlElements = controls.map((control) => {
+    const ingredientsKeys = Object.keys(ingredients);
+    const controlElements = ingredientsKeys.map((key) => {
         return (
             <BuildControl
-                key={control.type}
-                label={control.label}
-                ingredientAdded={() => ingredientAdded(control.type)}
-                ingredientRemoved={() => ingredientRemoved(control.type)}
-                disabled={disabled[control.type]}
+                key={key}
+                label={ingredients[key].label}
+                ingredientAdded={() => ingredientAdded(key)}
+                ingredientRemoved={() => ingredientRemoved(key)}
+                disabled={ingredients[key].count <= 0}
             />
         );
     });
@@ -38,7 +32,7 @@ const BuildControls = ({
             </p>
             {controlElements}
             <button
-                disabled={!purchasable}
+                disabled={ingredientsCount <= 0}
                 className={s.OrderButton}
                 onClick={purchasing}
             >

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { signIn, signUp } from "../../store/auth-reducer/auth-reducer";
+import { signIn, signUp } from "../../store/auth-reducer/authReducer";
 import SignUp from "../../components/Auth/SignUp/SignUp";
 import SignIn from "../../components/Auth/SignIn/SignIn";
 import { Redirect } from "react-router-dom";

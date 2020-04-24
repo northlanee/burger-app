@@ -4,30 +4,31 @@ import Ingredient from "./Ingredient/Ingredient";
 
 import s from "./Burger.module.css";
 
-const Burger = ({ ingredients }) => {
-    const ingredientsArray = [];
-    for (let key in ingredients) {
-        if (ingredients[key]) {
-            for (let i = 0; i < ingredients[key]; i++) {
-                ingredientsArray.push(String(key));
-            }
-        }
-    }
-
+const Burger = ({ ingredients, ingredientsCount }) => {
     let ingredientElements = [];
-    if (!ingredientsArray.length)
+    if (!ingredientsCount)
         ingredientElements = <p>Please, start adding elements</p>;
     else {
-        ingredientElements = ingredientsArray.map((element, index) => {
-            return <Ingredient key={index} type={element} />;
+        const keys = Object.keys(ingredients);
+        keys.forEach((key) => {
+            if (ingredients[key].count) {
+                for (let i = 0; i < ingredients[key].count; i++) {
+                    ingredientElements.push(
+                        <Ingredient
+                            key={key + i}
+                            cssClass={ingredients[key].className}
+                        />
+                    );
+                }
+            }
         });
     }
 
     return (
         <div className={s.Burger}>
-            <Ingredient type="bread-top" />
+            <Ingredient cssClass="BreadTop" />
             {ingredientElements}
-            <Ingredient type="bread-bottom" />
+            <Ingredient cssClass="BreadBottom" />
         </div>
     );
 };

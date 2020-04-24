@@ -7,15 +7,16 @@ const OrderSummary = ({
     purchaseContinue,
     price,
 }) => {
-    const ingredientsSummary = [];
-    for (let key in ingredients) {
-        ingredientsSummary.push(
-            <li key={key}>
-                <span style={{ textTransform: "capitalize" }}>{key}</span>:{" "}
-                {ingredients[key]}
+    const ingredientsSummary = ingredients.map((ingredient) => {
+        return (
+            <li key={ingredient.name}>
+                <span style={{ textTransform: "capitalize" }}>
+                    {ingredient.name}
+                </span>
+                : {ingredient.count}
             </li>
         );
-    }
+    });
 
     return (
         <>

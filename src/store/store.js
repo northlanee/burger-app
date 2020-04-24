@@ -1,9 +1,9 @@
 import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
-import ordersReducer from "./orders-reducer";
-import burgerReducer from "./burger-reducer";
-import authReducer from "./auth-reducer/auth-reducer";
+import ordersReducer from "./orders-reducer/ordersReducer";
+import burgerReducer from "./burger-reducer/burgerReducer";
+import authReducer from "./auth-reducer/authReducer";
 
 const reducers = combineReducers({
     ordersReducer,

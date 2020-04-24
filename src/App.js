@@ -19,10 +19,10 @@ const App = () => {
                     <Layout>
                         <Switch>
                             <Route exact path="/" component={BurgerBuilder} />
-                            <Route path="/checkout" component={Checkout} />
-                            <Route path="/orders" component={Orders} />
-                            <Route exact path="/logout" component={Logout} />
-                            <Route exact path="/auth" component={Auth} />
+                            {/*<Route path="/checkout" component={Checkout} />*/}
+                            {/*<Route path="/orders" component={Orders} />*/}
+                            {/*<Route exact path="/logout" component={Logout} />*/}
+                            {/*<Route exact path="/auth" component={Auth} />*/}
                         </Switch>
                     </Layout>
                 </BrowserRouter>

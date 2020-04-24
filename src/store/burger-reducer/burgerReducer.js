@@ -3,34 +3,25 @@ import axios from "../../api";
 
 const prefix = "@burger/";
 
-const SET_INGREDIENTS = prefix + "SET_INGREDIENTS";
-const SET_BURGER = prefix + "SET_BURGER";
 const SET_LOADING = prefix + "SET_LOADING";
+const SET_BURGER = prefix + "SET_BURGER";
 
 const initialState = {
-    costs: {
-        salad: 0.44,
-        cheese: 0.57,
-        meat: 1.2,
-        bacon: 1.35,
-    },
     ingredients: null,
-    totalCost: 1.5,
+    ingredientsCount: null,
+    totalPrice: null,
     loading: true,
 };
 
 const burgerReducer = (state = initialState, action) => {
     switch (action.type) {
-        case SET_INGREDIENTS:
-            return updateObject(state, {
-                ingredients: action.payload.ingredients,
-                totalCost: 1.5,
-            });
         case SET_BURGER:
-            return updateObject(state, {
+            return {
+                ...state,
                 ingredients: action.payload.ingredients,
-                totalCost: action.payload.totalCost,
-            });
+                ingredientsCount: action.payload.ingredientsCount,
+                totalPrice: action.payload.totalPrice,
+            };
         case SET_LOADING:
             return updateObject(state, {
                 loading: action.payload,
@@ -42,16 +33,29 @@ const burgerReducer = (state = initialState, action) => {
 
 export default burgerReducer;
 
-export const setIngredients = (payload) => ({ type: SET_INGREDIENTS, payload });
+const countIngredients = (ingredients) => {
+    const keys = Object.keys(ingredients);
+    return keys.reduce((prev, key) => {
+        return prev + ingredients[key].count;
+    }, 0);
+};
+
 export const setBurger = (payload) => ({ type: SET_BURGER, payload });
 export const setLoading = (payload) => ({ type: SET_LOADING, payload });
 
 export const getIngredients = () => (dispatch) => {
     dispatch(setLoading(true));
     axios
-        .get("/ingredients.json")
+        .get("/ingr.json")
         .then((response) => {
-            dispatch(setIngredients({ ingredients: response.data }));
+            const { totalPrice, ...ingredients } = response.data;
+            dispatch(
+                setBurger({
+                    ingredients,
+                    ingredientsCount: countIngredients(ingredients),
+                    totalPrice,
+                })
+            );
             dispatch(setLoading(false));
         })
         .catch((err) => {

@@ -3,7 +3,7 @@ import Order from "../../components/Order/Order";
 
 import Spinner from "../../components/UI/Spinner/Spinner";
 import { connect } from "react-redux";
-import { getOrders } from "../../store/orders-reducer/orders-reducer";
+import { getOrders } from "../../store/orders-reducer/ordersReducer";
 
 class Orders extends Component {
     componentDidMount() {
