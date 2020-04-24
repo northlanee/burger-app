@@ -1,7 +1,9 @@
 import axios from "../../api";
 
-const SET_ORDERS = "SET_ORDERS";
-const SET_LOADING = "SET_LOADING";
+const prefix = "@orders/";
+
+const SET_ORDERS = prefix + "SET_ORDERS";
+const SET_LOADING = prefix + "SET_LOADING";
 
 const initialState = {
     orders: [],
@@ -29,9 +31,11 @@ export default ordersReducer;
 
 export const setOrders = (orders) => ({ type: SET_ORDERS, orders });
 const setLoading = (payload) => ({ type: SET_LOADING, payload });
-export const getOrders = () => (dispatch) => {
+
+export const getOrders = (token) => (dispatch) => {
     dispatch(setLoading(true));
-    axios.get("/orders.json").then((res) => {
+    console.log(token);
+    axios.get("/orders.json?auth=" + token).then((res) => {
         const fetchedOrders = [];
         for (let key in res.data) {
             fetchedOrders.push({
@@ -44,9 +48,9 @@ export const getOrders = () => (dispatch) => {
     });
 };
 
-export const orderHandler = (order, history) => (dispatch) => {
+export const orderHandler = (order, token, history) => (dispatch) => {
     dispatch(setLoading(true));
-    axios.post("/orders.json", order).then(() => {
+    axios.post("/orders.json?auth=" + token, order).then(() => {
         dispatch(setLoading(false));
         history.push("/orders");
     });

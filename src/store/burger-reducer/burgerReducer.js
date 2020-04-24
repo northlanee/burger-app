@@ -5,6 +5,7 @@ const prefix = "@burger/";
 
 const SET_INGREDIENTS = prefix + "SET_INGREDIENTS";
 const SET_BURGER = prefix + "SET_BURGER";
+const SET_LOADING = prefix + "SET_LOADING";
 
 const initialState = {
     costs: {
@@ -30,6 +31,10 @@ const burgerReducer = (state = initialState, action) => {
                 ingredients: action.payload.ingredients,
                 totalCost: action.payload.totalCost,
             });
+        case SET_LOADING:
+            return updateObject(state, {
+                loading: action.payload,
+            });
         default:
             return state;
     }
@@ -39,9 +44,18 @@ export default burgerReducer;
 
 export const setIngredients = (payload) => ({ type: SET_INGREDIENTS, payload });
 export const setBurger = (payload) => ({ type: SET_BURGER, payload });
+export const setLoading = (payload) => ({ type: SET_LOADING, payload });
 
 export const getIngredients = () => (dispatch) => {
-    axios.get("/ingredients.json").then((response) => {
-        dispatch(setIngredients({ ingredients: response.data }));
-    });
+    dispatch(setLoading(true));
+    axios
+        .get("/ingredients.json")
+        .then((response) => {
+            dispatch(setIngredients({ ingredients: response.data }));
+            dispatch(setLoading(false));
+        })
+        .catch((err) => {
+            console.log(err);
+            dispatch(setLoading(false));
+        });
 };

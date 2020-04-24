@@ -30,7 +30,8 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler = (purchasing) => {
-        this.setState({ purchasing });
+        if (this.props.isAuth) this.setState({ purchasing });
+        else this.props.history.push("/auth");
     };
 
     purchaseContinueHandler = () => {
@@ -79,7 +80,7 @@ class BurgerBuilder extends Component {
         );
 
         let burger = <Spinner />;
-        if (ingredients) {
+        if (!this.props.loading) {
             burger = (
                 <>
                     <Burger ingredients={ingredients} />
@@ -90,6 +91,7 @@ class BurgerBuilder extends Component {
                         disabled={disabledInfo}
                         price={totalCost}
                         purchasing={() => this.purchaseHandler(true)}
+                        isAuth={this.props.isAuth}
                     />
                 </>
             );
@@ -115,6 +117,7 @@ const mapStateToProps = (state) => {
         costs: state.burgerReducer.costs,
         totalCost: state.burgerReducer.totalCost,
         loading: state.burgerReducer.loading,
+        isAuth: state.authReducer.token !== null,
     };
 };
 

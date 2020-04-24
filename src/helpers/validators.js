@@ -17,4 +17,9 @@ export const flatValidator = Yup.number()
     .max(999, "Must be a valid flat number")
     .required("Required!");
 
+export const passwordValidator = Yup.string()
+    .min(6, "Too short!")
+    .max(16, "Too long!")
+    .required("Required!");
+
 export default Yup;

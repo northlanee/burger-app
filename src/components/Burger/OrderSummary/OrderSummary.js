@@ -26,10 +26,10 @@ const OrderSummary = ({
                 <strong>Total price: {price.toFixed(2)}$</strong>
             </p>
             <p>Continue to checkout?</p>
-            <Button clicked={purchaseCancel} type="Danger">
+            <Button clicked={purchaseCancel} btnType="Danger" type="button">
                 CANCEL
             </Button>
-            <Button clicked={purchaseContinue} type="Success">
+            <Button clicked={purchaseContinue} btnType="Success" type="button">
                 CONTINUE
             </Button>
         </>

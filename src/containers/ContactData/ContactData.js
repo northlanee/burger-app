@@ -8,13 +8,13 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { orderHandler } from "../../store/orders-reducer/orders-reducer";
 
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import Yup, {
     nameValidator,
     emailValidator,
     flatValidator,
 } from "./../../helpers/validators";
-import Input from "../../components/UI/Input/Input";
+import fieldCreator from "../../helpers/formFieldCreator";
 
 class ContactData extends Component {
     createOrder = (values) => {
@@ -33,8 +33,12 @@ class ContactData extends Component {
         };
     };
 
-    orderHandler = (values) => {
-        this.props.orderHandler(this.createOrder(values), this.props.history);
+    orderSubmit = (values) => {
+        this.props.orderHandler(
+            this.createOrder(values),
+            this.props.token,
+            this.props.history
+        );
     };
 
     render() {
@@ -48,82 +52,66 @@ class ContactData extends Component {
 
         const initialValues = {
             name: "",
-            email: "",
+            email: this.props.email || "",
             city: "",
             street: "",
             flat: "",
         };
 
-        const fieldCreator = (name, placeholder, type, errors, touched) => {
-            return (
-                <>
-                    {errors[name] && touched[name] ? (
-                        <div className={s.Error}>{errors[name]}</div>
-                    ) : null}
-                    <Field
-                        name={name}
-                        type={type}
-                        placeholder={placeholder}
-                        component={Input}
-                    />
-                </>
-            );
-        };
-
         const form = (
-            <div>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={(values) => this.orderHandler(values)}
-                    validationSchema={signupSchema}
-                >
-                    {({ errors, touched }) => (
-                        <Form>
-                            {fieldCreator(
-                                "name",
-                                "Your name",
-                                "text",
-                                errors,
-                                touched
-                            )}
+            <Formik
+                initialValues={initialValues}
+                onSubmit={(values) => this.orderSubmit(values)}
+                validationSchema={signupSchema}
+            >
+                {({ errors, touched }) => (
+                    <Form>
+                        {fieldCreator(
+                            "name",
+                            "Your name",
+                            "text",
+                            errors,
+                            touched
+                        )}
 
-                            {fieldCreator(
-                                "email",
-                                "Your email",
-                                "email",
-                                errors,
-                                touched
-                            )}
+                        {fieldCreator(
+                            "email",
+                            "Your email",
+                            "email",
+                            errors,
+                            touched
+                        )}
 
-                            {fieldCreator(
-                                "city",
-                                "Your city",
-                                "text",
-                                errors,
-                                touched
-                            )}
+                        {fieldCreator(
+                            "city",
+                            "Your city",
+                            "text",
+                            errors,
+                            touched
+                        )}
 
-                            {fieldCreator(
-                                "street",
-                                "Your street",
-                                "text",
-                                errors,
-                                touched
-                            )}
+                        {fieldCreator(
+                            "street",
+                            "Your street",
+                            "text",
+                            errors,
+                            touched
+                        )}
 
-                            {fieldCreator(
-                                "flat",
-                                "Your flat",
-                                "text",
-                                errors,
-                                touched
-                            )}
+                        {fieldCreator(
+                            "flat",
+                            "Your flat",
+                            "text",
+                            errors,
+                            touched
+                        )}
 
-                            <Button type="Success">Submit</Button>
-                        </Form>
-                    )}
-                </Formik>
-            </div>
+                        <Button btnType="Success" type="submit">
+                            Submit
+                        </Button>
+                    </Form>
+                )}
+            </Formik>
         );
 
         return (
@@ -138,10 +126,17 @@ class ContactData extends Component {
 const mapStateToProps = (state) => {
     return {
         loading: state.ordersReducer.loading,
+        email: state.authReducer.email,
+        token: state.authReducer.token,
     };
 };
 
+const mapDispatchToProps = (dispatch) => ({
+    orderHandler: (values, token, history) =>
+        dispatch(orderHandler(values, token, history)),
+});
+
 export default compose(
     withRouter,
-    connect(mapStateToProps, { orderHandler })
+    connect(mapStateToProps, mapDispatchToProps)
 )(ContactData);
