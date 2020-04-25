@@ -5,11 +5,13 @@ const prefix = "@burger/";
 
 const SET_LOADING = prefix + "SET_LOADING";
 const SET_BURGER = prefix + "SET_BURGER";
+const SET_INITIALIZED = prefix + "SET_INITIALIZED";
 
 const initialState = {
     ingredients: null,
     ingredientsCount: null,
     totalPrice: null,
+    initialized: false,
     loading: true,
 };
 
@@ -26,6 +28,11 @@ const burgerReducer = (state = initialState, action) => {
             return updateObject(state, {
                 loading: action.payload,
             });
+        case SET_INITIALIZED:
+            return {
+                ...state,
+                initialized: action.payload,
+            };
         default:
             return state;
     }
@@ -42,6 +49,7 @@ const countIngredients = (ingredients) => {
 
 export const setBurger = (payload) => ({ type: SET_BURGER, payload });
 export const setLoading = (payload) => ({ type: SET_LOADING, payload });
+export const setInitialized = (payload) => ({ type: SET_INITIALIZED, payload });
 
 export const getIngredients = () => (dispatch) => {
     dispatch(setLoading(true));
@@ -56,10 +64,10 @@ export const getIngredients = () => (dispatch) => {
                     totalPrice,
                 })
             );
+            dispatch(setInitialized(true));
             dispatch(setLoading(false));
         })
-        .catch((err) => {
-            console.log(err);
+        .catch(() => {
             dispatch(setLoading(false));
         });
 };

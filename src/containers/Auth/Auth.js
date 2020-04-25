@@ -54,7 +54,7 @@ const mapStateToProps = (state) => ({
     loading: state.authReducer.loading,
     error: state.authReducer.error,
     isAuth: state.authReducer.token !== null,
-    builtBurger: state.burgerReducer.ingredients,
+    builtBurger: state.burgerReducer.ingredientsCount > 0,
 });
 
 export default connect(mapStateToProps, { signUp, signIn })(Auth);

@@ -17,7 +17,7 @@ class BurgerBuilder extends Component {
     };
 
     componentDidMount() {
-        this.props.getIngredients();
+        if (!this.props.initialized) this.props.getIngredients();
     }
 
     purchaseHandler = (purchasing) => {
@@ -31,7 +31,7 @@ class BurgerBuilder extends Component {
         });
     };
 
-    updateIngredient = (name, count) => {
+    updateBurger = (name, count) => {
         const newIngredients = { ...this.props.ingredients };
         newIngredients[name].count = this.props.ingredients[name].count + count;
         this.props.setBurger({
@@ -46,24 +46,15 @@ class BurgerBuilder extends Component {
     };
 
     addIngredientHandler = (name) => {
-        this.updateIngredient(name, 1);
+        this.updateBurger(name, 1);
     };
 
     removeIngredientHandler = (name) => {
-        this.updateIngredient(name, -1);
+        this.updateBurger(name, -1);
     };
 
     render() {
         const { ingredients, ingredientsCount, totalPrice } = this.props;
-
-        // const orderSummary = (
-        //     <OrderSummary
-        //         ingredients={ingredients}
-        //         purchaseCancel={() => this.purchaseHandler(false)}
-        //         purchaseContinue={this.purchaseContinueHandler}
-        //         price={totalCost}
-        //     />
-        // );
 
         let burger = <Spinner />;
         if (!this.props.loading) {
@@ -86,13 +77,22 @@ class BurgerBuilder extends Component {
             );
         }
 
+        const orderSummary = this.state.purchasing ? (
+            <OrderSummary
+                ingredients={ingredients}
+                purchaseCancel={() => this.purchaseHandler(false)}
+                purchaseContinue={this.purchaseContinueHandler}
+                price={totalPrice}
+            />
+        ) : null;
+
         return (
             <>
                 <Modal
                     show={this.state.purchasing}
                     modalClose={() => this.purchaseHandler(false)}
                 >
-                    {/*{orderSummary}*/}
+                    {orderSummary}
                 </Modal>
                 {burger}
             </>
@@ -107,6 +107,7 @@ const mapStateToProps = (state) => {
         totalPrice: state.burgerReducer.totalPrice,
         loading: state.burgerReducer.loading,
         isAuth: state.authReducer.token !== null,
+        initialized: state.burgerReducer.initialized,
     };
 };
 

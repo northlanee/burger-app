@@ -32,18 +32,19 @@ export default ordersReducer;
 export const setOrders = (orders) => ({ type: SET_ORDERS, orders });
 const setLoading = (payload) => ({ type: SET_LOADING, payload });
 
-export const getOrders = (token) => (dispatch) => {
+export const getOrders = (token, userId) => (dispatch) => {
     dispatch(setLoading(true));
-    console.log(token);
-    axios.get("/orders.json?auth=" + token).then((res) => {
-        const fetchedOrders = [];
-        for (let key in res.data) {
-            fetchedOrders.push({
-                ...res.data[key],
-                id: key,
+    const queryParams =
+        "?auth=" + token + '&orderBy="customer/id"&equalTo="' + userId + '"';
+    axios.get("/orders.json" + queryParams).then((res) => {
+        let orders = [];
+        if (res.data) {
+            const keys = Object.keys(res.data);
+            orders = keys.map((key) => {
+                return { ...res.data[key], id: key };
             });
         }
-        dispatch(setOrders(fetchedOrders));
+        dispatch(setOrders(orders));
         dispatch(setLoading(false));
     });
 };

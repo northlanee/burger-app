@@ -7,13 +7,11 @@ const OrderSummary = ({
     purchaseContinue,
     price,
 }) => {
-    const ingredientsSummary = ingredients.map((ingredient) => {
+    const keys = Object.keys(ingredients);
+    const ingredientsSummary = keys.map((key) => {
         return (
-            <li key={ingredient.name}>
-                <span style={{ textTransform: "capitalize" }}>
-                    {ingredient.name}
-                </span>
-                : {ingredient.count}
+            <li key={key}>
+                {ingredients[key].label}: {ingredients[key].count}
             </li>
         );
     });

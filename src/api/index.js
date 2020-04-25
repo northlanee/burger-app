@@ -24,4 +24,24 @@ export const signInAPI = axios.create({
     },
 });
 
+export const getUserData = axios.create({
+    baseURL:
+        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyBxanQtiRccFtxFJZib3S3Qs_8DhcxRV_E",
+    headers: {
+        post: {
+            "Content-Type": "application/json",
+        },
+    },
+});
+
+export const getNewIdToken = axios.create({
+    baseURL:
+        "https://securetoken.googleapis.com/v1/token?key=AIzaSyBxanQtiRccFtxFJZib3S3Qs_8DhcxRV_E",
+    headers: {
+        post: {
+            "Content-Type": "application/json",
+        },
+    },
+});
+
 export default instance;

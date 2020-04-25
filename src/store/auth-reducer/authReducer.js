@@ -1,4 +1,5 @@
-import { signUpAPI, signInAPI } from "../../api";
+import { signUpAPI, signInAPI, getNewIdToken, getUserData } from "../../api";
+import { getToken, removeToken, setToken } from "../../helpers/cookies";
 
 const prefix = "@auth/";
 
@@ -6,6 +7,8 @@ const SET_LOADING = prefix + "SET_LOADING";
 const SET_USER_DATA = prefix + "SET_USER_DATA";
 const SET_ERROR = prefix + "SET_ERROR";
 const LOG_OUT = prefix + "LOG_OUT";
+const SET_INIT_LOADING = prefix + "SET_INIT_LOADING";
+const SET_ID_TOKEN = prefix + "SET_ID_TOKEN";
 
 const initialState = {
     token: null,
@@ -13,6 +16,7 @@ const initialState = {
     email: null,
     error: null,
     loading: false,
+    initLoading: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -30,6 +34,10 @@ const authReducer = (state = initialState, action) => {
             return { ...state, error: action.error };
         case LOG_OUT:
             return { ...state, token: null, userId: null, email: null };
+        case SET_INIT_LOADING:
+            return { ...state, initLoading: action.payload };
+        case SET_ID_TOKEN:
+            return { ...state, token: action.payload };
         default:
             return state;
     }
@@ -38,6 +46,8 @@ const authReducer = (state = initialState, action) => {
 export default authReducer;
 
 const setLoading = (payload) => ({ type: SET_LOADING, payload });
+const setInitLoading = (payload) => ({ type: SET_INIT_LOADING, payload });
+const setIdToken = (payload) => ({ type: SET_ID_TOKEN, payload });
 const setUserData = (id, token, email) => ({
     type: SET_USER_DATA,
     id,
@@ -45,12 +55,15 @@ const setUserData = (id, token, email) => ({
     email,
 });
 const setError = (error) => ({ type: SET_ERROR, error });
-export const logOut = () => ({ type: LOG_OUT });
+export const logOut = () => {
+    removeToken();
+    return { type: LOG_OUT };
+};
 
 const setAuthTimeout = (expiresIn) => (dispatch) => {
     setTimeout(() => {
-        dispatch(logOut());
-    }, expiresIn * 1000);
+        dispatch(refreshToken(getToken()));
+    }, (expiresIn * 1000) / 2);
 };
 
 const auth = (api, values) => (dispatch) => {
@@ -67,6 +80,7 @@ const auth = (api, values) => (dispatch) => {
             );
             dispatch(setAuthTimeout(res.data.expiresIn));
             dispatch(setLoading(false));
+            setToken(res.data.refreshToken);
         })
         .catch((err) => {
             dispatch(
@@ -79,6 +93,46 @@ const auth = (api, values) => (dispatch) => {
             );
             dispatch(setLoading(false));
         });
+};
+
+const refreshToken = (token) => (dispatch) => {
+    return getNewIdToken
+        .post("", {
+            grant_type: "refresh_token",
+            refresh_token: token,
+        })
+        .then((res) => {
+            dispatch(setIdToken(res.data.id_token));
+            return res.data.id_token;
+        });
+};
+
+const fetchUserData = (token) => (dispatch) => {
+    return getUserData
+        .post("", {
+            idToken: token,
+        })
+        .then((res) => {
+            dispatch(
+                setUserData(
+                    res.data.users[0].localId,
+                    token,
+                    res.data.users[0].email
+                )
+            );
+        });
+};
+
+export const initialLogIn = () => (dispatch) => {
+    const token = getToken();
+    if (token) {
+        dispatch(setInitLoading(true));
+        dispatch(refreshToken(token)).then((idToken) =>
+            dispatch(fetchUserData(idToken)).then(() => {
+                dispatch(setInitLoading(false));
+            })
+        );
+    }
 };
 
 export const signUp = (values) => (dispatch) => {

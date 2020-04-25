@@ -15,6 +15,7 @@ import Yup, {
 } from "./../../helpers/validators";
 import fieldCreator from "../../helpers/formFieldCreator";
 import { orderHandler } from "../../store/orders-reducer/ordersReducer";
+import { getIngredients } from "../../store/burger-reducer/burgerReducer";
 
 class ContactData extends Component {
     createOrder = (values) => {
@@ -22,8 +23,9 @@ class ContactData extends Component {
             ingredients: this.props.ingredients,
             price: this.props.price.toFixed(2),
             customer: {
-                name: values.name,
+                id: this.props.userId,
                 email: values.email,
+                name: values.name,
                 address: {
                     city: values.city,
                     street: values.street,
@@ -39,20 +41,21 @@ class ContactData extends Component {
             this.props.token,
             this.props.history
         );
+        this.props.getIngredients();
     };
 
     render() {
         const signupSchema = Yup.object().shape({
-            name: nameValidator,
             email: emailValidator,
+            name: nameValidator,
             city: nameValidator,
             street: nameValidator,
             flat: flatValidator,
         });
 
         const initialValues = {
-            name: "",
             email: this.props.email || "",
+            name: "",
             city: "",
             street: "",
             flat: "",
@@ -67,17 +70,17 @@ class ContactData extends Component {
                 {({ errors, touched }) => (
                     <Form>
                         {fieldCreator(
-                            "name",
-                            "Your name",
-                            "text",
+                            "email",
+                            "Your email",
+                            "email",
                             errors,
                             touched
                         )}
 
                         {fieldCreator(
-                            "email",
-                            "Your email",
-                            "email",
+                            "name",
+                            "Your name",
+                            "text",
                             errors,
                             touched
                         )}
@@ -128,12 +131,14 @@ const mapStateToProps = (state) => {
         loading: state.ordersReducer.loading,
         email: state.authReducer.email,
         token: state.authReducer.token,
+        userId: state.authReducer.userId,
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
     orderHandler: (values, token, history) =>
         dispatch(orderHandler(values, token, history)),
+    getIngredients: () => dispatch(getIngredients()),
 });
 
 export default compose(
